@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ajouter un plat</title>
+</head>
+<body>
+  <h1>Ajouter un plat</h1>
+
+  <form id="formPlat" novalidate>
+    <label for="nomPlat">Nom du plat</label>
+    <input id="nomPlat" type="text" maxlength="60" required>
+
+    <label for="paysPlat">Pays</label>
+    <select id="paysPlat" required>
+      <option value="">-- Choisir un pays --</option>
+    </select>
+
+    <label for="prixPlat">Prix (FCFA)</label>
+    <input id="prixPlat" type="number" min="1" step="1" required>
+
+    <label for="descriptionPlat">Description</label>
+    <textarea id="descriptionPlat" maxlength="300" rows="3"></textarea>
+
+    <label for="imagePlat">Image (chemin ou lien)</label>
+    <input id="imagePlat" type="text" placeholder="img/thieboudienne.jpg">
+
+    <label><input id="specialitePlat" type="checkbox"> Spécialité de la maison</label>
+    <label><input id="disponiblePlat" type="checkbox" checked> Disponible</label>
+
+    <button type="submit">Ajouter le plat</button>
+  </form>
+
+  <div id="messagePlat" role="alert"></div>
+
+  <script src="../js/ajout-plat.js"></script>
+</body>
+</html>
