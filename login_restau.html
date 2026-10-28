@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saveurs d'Afrique - Connexion</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#e74c3c',
+                            darkRed: '#c0392b',
+                            orange: '#e67e22',
+                            lightOrange: '#f39c12',
+                            bg: '#fff8f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fceae6 0%, #fdf0ed 50%, #f9e2dc 100%);
+            min-height: 100vh;
+        }
+
+        /* Zigzag Sawtooth Pattern Header Inspired by Restaurant Receipts */
+        .sawtooth-bottom {
+            position: relative;
+        }
+        .sawtooth-bottom::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: radial-gradient(circle, transparent, transparent 50%, #ffffff 50%, #ffffff 100%);
+            background-size: 16px 20px;
+            background-position: 0 -10px;
+        }
+
+        /* Glassmorphism & Smooth Animations */
+        .phone-container {
+            box-shadow: 0 25px 50px -12px rgba(231, 76, 60, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-focus-effect:focus-within {
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
+            border-color: #e74c3c;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center p-3 sm:p-6 min-h-screen">
+
+    <!-- Mockup Cadre Téléphone / Card Container -->
+    <div class="phone-container w-full max-w-md bg-white rounded-3xl overflow-hidden border border-orange-100 flex flex-col min-h-[750px] relative">
+
+        <!-- En-tête avec Bannière Rouge & Zigzag -->
+        <header class="bg-gradient-to-r from-brand-red via-red-500 to-brand-orange text-white text-center pt-8 pb-10 px-6 relative sawtooth-bottom shadow-md">
+            <!-- Menus / Actions rapides -->
+            <div class="absolute top-4 right-4 flex items-center gap-2">
+                <button onclick="switchView('app-preview')" class="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white p-2 rounded-full text-xs transition flex items-center gap-1 px-3">
+                    <i class="fa-solid fa-store"></i> Panier
+                </button>
+            </div>
+
+            <!-- Logo et Marque -->
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl mb-3 border border-white/20 shadow-inner">
+                <i class="fa-solid fa-utensils text-3xl text-yellow-300"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-wide drop-shadow-sm italic">Saveurs d'Afrique</h1>
+            <p class="text-xs font-light tracking-widest uppercase text-red-100 mt-1 opacity-90">L'authenticité au bout des doigts</p>
+        </header>
+
+        <!-- Contenu Principal -->
+        <main class="flex-1 px-6 pt-8 pb-6 flex flex-col justify-between">
+
+            <div>
+                <!-- Boutons de sélection du Rôle (Tabs Client vs Responsable) -->
+                <div class="grid grid-cols-2 gap-2 p-1.5 bg-gray-100 rounded-2xl mb-6 shadow-inner">
+                    <button id="tab-client" onclick="setRole('client')" 
+                        class="tab-btn py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-white text-brand-red shadow-sm">
+                        <i class="fa-solid fa-user"></i> Espace Client
+                    </button>
+                    <button id="tab-responsable" onclick="setRole('responsable')" 
+                        class="tab-btn py-3 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-2 text-gray-500 hover:text-gray-800">
+                        <i class="fa-solid fa-user-shield"></i> Responsable
+                    </button>
+                </div>
+
+                <!-- Message d'alerte en cas d'erreur -->
+                <div id="error-alert" class="hidden mb-4 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-medium flex items-center gap-2.5 shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation text-base shrink-0"></i>
+                    <span id="error-message">Code d'accès incorrect ! Accès refusé.</span>
+                </div>
+
+                <!-- Formulaire CLIENT -->
+                <div id="form-client" class="space-y-4">
+                    <!-- Connexion Réseaux Sociaux / Méthodes Rapides -->
+                    <p class="text-xs text-center text-gray-400 font-medium uppercase tracking-wider">Connexion rapide via</p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Option Numéro de Téléphone -->
+                        <button onclick="togglePhoneInput()" class="flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 px-4 rounded-xl text-xs font-medium hover:bg-emerald-700 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-phone text-sm"></i> Téléphone
+                        </button>
+                        <!-- Option Google -->
+                        <button onclick="loginSocial('Google')" class="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-xs font-medium hover:bg-gray-50 transition shadow-sm active:scale-95">
+                            <i class="fa-brands fa-google text-red-500 text-sm"></i> Google
+                        </button>
+                    </div>
+
+                    <!-- Champ dynamique de Numéro de Téléphone (affichable) -->
+                    <div id="phone-field-box" class="hidden p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                        <label class="text-[11px] font-semibold text-emerald-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-mobile-screen"></i> Saisissez votre numéro mobile :
+                        </label>
+                        <div class="relative input-focus-effect border border-emerald-300 rounded-lg bg-white">
+                            <span class="absolute left-3 top-2.5 text-xs font-semibold text-gray-500">+212</span>
+                            <input type="tel" id="client-phone-number" placeholder="6 00 00 00 00" class="w-full bg-transparent pl-14 pr-3 py-2 text-xs text-gray-800 outline-none font-medium">
+                        </div>
+                    </div>
+
+                    <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-gray-200"></div>
+                        <span class="flex-shrink mx-3 text-xs text-gray-400 uppercase font-semibold">OU PAR EMAIL</span>
+                        <div class="flex-grow border-t border-gray-200"></div>
+                    </div>
+
+                    <!-- Identifiant Email -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-medium text-gray-700">Adresse email / Identifiant</label>
+                        <div class="relative input-focus-effect border border-gray-200 rounded-xl bg-gray-50/50 transition">
+                            <i class="fa-regular fa-envelope absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="email" id="client-email" placeholder="exemple@mail.com" class="w-full bg-transparent pl-10 pr-4 py-3 text-xs text-gray-800 outline-none font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-medium text-gray-700">Votre mot de passe</label>
+                        <div class="relative input-focus-effect border border-gray-200 rounded-xl bg-gray-50/50 transition">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="password" id="client-password" placeholder="••••••••" class="w-full bg-transparent pl-10 pr-4 py-3 text-xs text-gray-800 outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Rester connecté -->
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+                            <input type="checkbox" checked class="accent-brand-red rounded w-4 h-4">
+                            Rester connecté
+                        </label>
+                        <a href="#" onclick="alert('Un lien de réinitialisation a été envoyé par e-mail.')" class="text-xs text-brand-orange font-medium hover:underline">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+
+                <!-- Formulaire RESPONSABLE (Masqué par défaut) -->
+                <div id="form-responsable" class="hidden space-y-4">
+                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-2xl text-xs text-orange-800 leading-relaxed flex items-start gap-3">
+                        <i class="fa-solid fa-key text-brand-orange text-lg mt-0.5"></i>
+                        <div>
+                            <strong>Accès restreint aux administrateurs</strong>
+                            <p class="text-orange-700/80 mt-0.5">Veuillez entrer le code de sécurité pour accéder au tableau de bord de gestion.</p>
+                        </div>
+                    </div>
+
+                    <!-- Champ du Code Responsable -->
+                    <div class="space-y-1 pt-2">
+                        <label class="text-xs font-semibold text-gray-700">Code d'accès Responsable</label>
+                        <div class="relative input-focus-effect border border-gray-200 rounded-xl bg-gray-50/50 transition">
+                            <i class="fa-solid fa-shield-halved absolute left-3.5 top-3.5 text-brand-orange text-sm"></i>
+                            <input type="password" id="admin-code" placeholder="Entrez le code secret (ex: ADMIN123)" class="w-full bg-transparent pl-10 pr-4 py-3 text-xs font-mono text-gray-800 outline-none tracking-widest">
+                        </div>
+                        <p class="text-[11px] text-gray-400 italic">Code démo par défaut : <span class="font-bold text-gray-600">ADMIN123</span></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bouton de Connexion principal -->
+            <div class="pt-6 space-y-3">
+                <button onclick="executeLogin()" class="w-full bg-gradient-to-r from-brand-red to-brand-orange hover:from-red-600 hover:to-orange-600 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition active:scale-[0.98]">
+                    Continuer <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+
+                <!-- Déconnexion rapide si déjà connecté -->
+                <div id="session-info" class="hidden text-center pt-2 border-t border-gray-100">
+                    <span class="text-xs text-gray-500">Connecté en tant que : <strong id="current-role-display" class="text-brand-red uppercase">Client</strong></span>
+                    <button onclick="deconnecter()" class="block w-full mt-2 text-xs text-red-500 font-semibold hover:underline">
+                        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion rapide
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bas de page -->
+        <footer class="py-3 bg-gray-50 border-t border-gray-100 text-center text-[11px] text-gray-400">
+            &copy; 2026 Saveurs d'Afrique • Tous droits réservés
+        </footer>
+
+    </div>
+
+    <!-- Script de logique métier & Gardes d'accès -->
+    <script>
+        let currentRole = 'client';
+
+        function togglePhoneInput() {
+            const phoneBox = document.getElementById('phone-field-box');
+            phoneBox.classList.toggle('hidden');
+        }
+
+        // Changer le rôle actif lors du clic sur les tabs
+        function setRole(role) {
+            currentRole = role;
+            const tabClient = document.getElementById('tab-client');
+            const tabResp = document.getElementById('tab-responsable');
+            const formClient = document.getElementById('form-client');
+            const formResp = document.getElementById('form-responsable');
+            const errorAlert = document.getElementById('error-alert');
+
+            errorAlert.classList.add('hidden');
+
+            if (role === 'client') {
+                tabClient.className = "tab-btn py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-white text-brand-red shadow-sm";
+                tabResp.className = "tab-btn py-3 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-2 text-gray-500 hover:text-gray-800";
+                formClient.classList.remove('hidden');
+                formResp.classList.add('hidden');
+            } else {
+                tabResp.className = "tab-btn py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-white text-brand-orange shadow-sm";
+                tabClient.className = "tab-btn py-3 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-2 text-gray-500 hover:text-gray-800";
+                formResp.classList.remove('hidden');
+                formClient.classList.add('hidden');
+            }
+        }
+
+        // Exécution de la connexion avec vérification stricte
+        function executeLogin() {
+            const errorAlert = document.getElementById('error-alert');
+            const errorMsg = document.getElementById('error-message');
+            const container = document.querySelector('.phone-container');
+
+            if (currentRole === 'responsable') {
+                const code = document.getElementById('admin-code').value.trim();
+                const CODE_VALIDE = "ADMIN123";
+
+                // Validation stricte du code d'accès
+                if (code !== CODE_VALIDE) {
+                    errorMsg.innerText = "Code d'accès Responsable incorrect ! (Code démo: ADMIN123)";
+                    errorAlert.classList.remove('hidden');
+                    
+                    // Effet visuel d'erreur (secousse)
+                    container.classList.add('shake-animation');
+                    setTimeout(() => container.classList.remove('shake-animation'), 400);
+                    return;
+                }
+            } else {
+                const phoneInput = document.getElementById('client-phone-number').value.trim();
+                const emailInput = document.getElementById('client-email').value.trim();
+                if (phoneInput !== "") {
+                    showNotification(`SMS d'authentification envoyé au +212 ${phoneInput}`);
+                }
+            }
+
+            // Enregistrement de la session dans le navigateur
+            localStorage.setItem('userRole', currentRole);
+            showNotification(`Connexion réussie en tant que ${currentRole.toUpperCase()}`);
+
+            updateSessionUI();
+
+            // Simulation de redirection selon le rôle
+            setTimeout(() => {
+                if (currentRole === 'responsable') {
+                    alert("Redirection vers le TABLEAU DE BORD RESPONSABLE...");
+                } else {
+                    alert("Redirection vers le CATALOGUE CLIENT...");
+                }
+            }, 600);
+        }
+
+        function loginSocial(provider) {
+            localStorage.setItem('userRole', 'client');
+            showNotification(`Connexion réussie via ${provider}`);
+            updateSessionUI();
+        }
+
+        // Fonction de Déconnexion
+        function deconnecter() {
+            localStorage.removeItem('userRole');
+            showNotification("Vous avez été déconnecté avec succès.");
+            updateSessionUI();
+        }
+
+        // Mise à jour de l'UI si une session existe
+        function updateSessionUI() {
+            const activeRole = localStorage.getItem('userRole');
+            const sessionBox = document.getElementById('session-info');
+            const roleDisplay = document.getElementById('current-role-display');
+
+            if (activeRole) {
+                sessionBox.classList.remove('hidden');
+                roleDisplay.innerText = activeRole;
+            } else {
+                sessionBox.classList.add('hidden');
+            }
+        }
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 right-5 bg-gray-900 text-white text-xs px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-2 animate-bounce";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Vérification au chargement
+        window.onload = function() {
+            updateSessionUI();
+        };
+    </script>
+</body>
+</html>

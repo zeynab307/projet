@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saveurs d'Afrique - Catalogue & Panier</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff6b35',
+                            darkOrange: '#e05320',
+                            lightOrange: '#fff4f0',
+                            accent: '#ffa600',
+                            dark: '#1e293b',
+                            bg: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- GARDE D'ACCÈS POUR CLIENT -->
+    <script>
+        const userRole = localStorage.getItem('userRole');
+        if (!userRole) {
+            localStorage.setItem('userRole', 'client');
+        }
+    </script>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-accent flex items-center justify-center text-white shadow-md shadow-brand-orange/30">
+                    <i class="fa-solid fa-utensils text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-900">Saveurs<span class="text-brand-orange">.d'Afrique</span></h1>
+                    <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">Menu Gourmand</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Badge Panier -->
+                <button class="relative bg-brand-lightOrange text-brand-orange px-4 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2.5">
+                    <i class="fa-solid fa-cart-shopping text-base"></i>
+                    <span>Mon Panier</span>
+                    <span id="badge-panier-count" class="bg-brand-orange text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">0</span>
+                </button>
+
+                <button onclick="deconnecter()" title="Déconnexion" class="text-slate-400 hover:text-red-500 p-2.5 rounded-xl hover:bg-red-50 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION PRINCIPALE -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- CATALOGUE DES PLATS -->
+        <section class="lg:col-span-2 space-y-6">
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900">Nos Spécialités Africaines 🌍</h2>
+                <p class="text-xs text-slate-500 font-medium mt-1">Sélectionnez vos plats préférés pour composer votre commande.</p>
+            </div>
+
+            <div id="catalogue-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Injection dynamique JS -->
+            </div>
+        </section>
+
+        <!-- PANIER ET CHAMPS PAIEMENT DYNAMIQUES -->
+        <aside class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-fit sticky top-28">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                    <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-basket-shopping text-brand-orange"></i> Votre Panier
+                    </h3>
+                    <span id="panier-items-label" class="text-xs font-semibold text-slate-400">0 article(s)</span>
+                </div>
+
+                <!-- Liste des articles -->
+                <div id="panier-items-container" class="py-4 space-y-3 max-h-52 overflow-y-auto">
+                    <!-- Vide par défaut -->
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <!-- CHOIX DU MODE DE PAIEMENT -->
+                <div class="py-3 border-t border-slate-100 space-y-3">
+                    <label class="block text-xs font-semibold text-slate-700">Mode de paiement</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="flex flex-col items-center justify-center p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-brand-orange transition text-center">
+                            <input type="radio" name="modePaiement" value="Espèces" checked onchange="afficherFormulairePaiement()" class="sr-only peer">
+                            <i class="fa-solid fa-money-bill-wave text-slate-400 peer-checked:text-brand-orange text-sm mb-1"></i>
+                            <span class="text-[10px] font-bold text-slate-600 peer-checked:text-brand-orange">Espèces</span>
+                        </label>
+                        <label class="flex flex-col items-center justify-center p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-brand-orange transition text-center">
+                            <input type="radio" name="modePaiement" value="Carte bancaire" onchange="afficherFormulairePaiement()" class="sr-only peer">
+                            <i class="fa-solid fa-credit-card text-slate-400 peer-checked:text-brand-orange text-sm mb-1"></i>
+                            <span class="text-[10px] font-bold text-slate-600 peer-checked:text-brand-orange">Carte</span>
+                        </label>
+                        <label class="flex flex-col items-center justify-center p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-brand-orange transition text-center">
+                            <input type="radio" name="modePaiement" value="Mobile Money" onchange="afficherFormulairePaiement()" class="sr-only peer">
+                            <i class="fa-solid fa-mobile-screen text-slate-400 peer-checked:text-brand-orange text-sm mb-1"></i>
+                            <span class="text-[10px] font-bold text-slate-600 peer-checked:text-brand-orange">Mobile</span>
+                        </label>
+                    </div>
+
+                    <!-- FORMULAIRES DE PAIEMENT DYNAMIQUES -->
+                    <!-- 1. Informations Carte Bancaire -->
+                    <div id="form-carte" class="hidden space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Numéro de carte</label>
+                            <input type="text" id="carte-numero" placeholder="1234 5678 9101 1121" maxlength="19" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-orange text-slate-800">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Expiration</label>
+                                <input type="text" id="carte-exp" placeholder="MM/YY" maxlength="5" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-orange text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">CVC</label>
+                                <input type="password" id="carte-cvc" placeholder="123" maxlength="3" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-orange text-slate-800">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Informations Mobile Money -->
+                    <div id="form-mobile" class="hidden space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Opérateur</label>
+                            <select id="mobile-operateur" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-orange text-slate-800">
+                                <option value="Orange Money">Orange Money</option>
+                                <option value="Wave">Wave</option>
+                                <option value="Free Money">Free Money</option>
+                                <option value="MTN MoMo">MTN MoMo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Numéro de téléphone</label>
+                            <input type="tel" id="mobile-numero" placeholder="77 000 00 00" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-orange text-slate-800">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RÉCAPITULATIF & TOTAL -->
+                <div class="pt-3 border-t border-slate-100 space-y-2">
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-500">
+                        <span>Sous-total</span>
+                        <span id="panier-subtotal" class="font-bold text-slate-700">0.00 MAD</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-500">
+                        <span>Frais de livraison</span>
+                        <span class="font-bold text-emerald-600">Gratuit</span>
+                    </div>
+                    <div class="flex justify-between items-center text-base font-extrabold text-slate-900 pt-2 border-t border-slate-100">
+                        <span>Total à payer</span>
+                        <span id="panier-total-realtime" class="text-brand-orange text-xl">0.00 MAD</span>
+                    </div>
+
+                    <button onclick="validerCommande()" id="btn-valider-commande" disabled class="w-full mt-2 bg-slate-200 text-slate-400 font-bold py-3.5 rounded-2xl text-xs transition shadow-md cursor-not-allowed">
+                        Valider la commande
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- SCRIPT JAVASCRIPT COMPLET -->
+    <script>
+        const mesPlats = [
+            {
+                id: 1,
+                nom: "Thiep au poisson",
+                origine: "🇸🇳 Sénégal",
+                prix: 50.00,
+                desc: "Riz rouge mijoté au poisson frais, légumes du jardin et épices sénégalaises.",
+                image: "Thiep au poisson.jpg"
+            },
+            {
+                id: 2,
+                nom: "Attieke poisson",
+                origine: "🇨🇮 Côte d'Ivoire",
+                prix: 50.00,
+                desc: "Semoule de manioc cuite à la vapeur servie avec poisson grillé, aloco et piment.",
+                image: "Attieke poisson.jpg"
+            },
+            {
+                id: 3,
+                nom: "Feuilles de manioc",
+                origine: "🇬🇦 Gabon",
+                prix: 50.00,
+                desc: "Plat gabonais savoureux préparé à base de pâte de feuilles de manioc mijotée.",
+                image: "Feuilles de manioc.jpg"
+            },
+            {
+                id: 4,
+                nom: "Sakamadesu",
+                origine: "🇨🇩 Congo",
+                prix: 50.00,
+                desc: "Spécialité congolaise réconfortante à base de poisson et haricots sur riz blanc.",
+                image: "Sakamadesu.jpg"
+            }
+        ];
+
+        let panier = JSON.parse(localStorage.getItem('panierClient')) || [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            afficherCatalogue();
+            mettreAJourPanierIHM();
+            afficherFormulairePaiement();
+        });
+
+        function afficherCatalogue() {
+            const grid = document.getElementById('catalogue-grid');
+            grid.innerHTML = '';
+
+            mesPlats.forEach(plat => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition flex flex-col justify-between";
+                
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden bg-slate-100">
+                        <img src="${plat.image}" alt="${plat.nom}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-sm">
+                            ${plat.origine}
+                        </span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="font-bold text-slate-800 text-base">${plat.nom}</h3>
+                                <span class="text-brand-orange font-extrabold text-base whitespace-nowrap">${plat.prix.toFixed(2)} MAD</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed line-clamp-2">${plat.desc}</p>
+                        </div>
+                        <button onclick="ajouterAuPanier(${plat.id})" class="w-full bg-brand-lightOrange text-brand-orange hover:bg-brand-orange hover:text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Ajouter au panier
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function ajouterAuPanier(id) {
+            const plat = mesPlats.find(p => p.id === id);
+            const itemExistant = panier.find(item => item.id === id);
+
+            if (itemExistant) {
+                itemExistant.quantite += 1;
+            } else {
+                panier.push({
+                    id: plat.id,
+                    nom: plat.nom,
+                    prix: plat.prix,
+                    image: plat.image,
+                    quantite: 1
+                });
+            }
+            sauvegarderPanier();
+        }
+
+        function modifierQuantite(id, delta) {
+            const item = panier.find(i => i.id === id);
+            if (!item) return;
+
+            item.quantite += delta;
+            if (item.quantite <= 0) {
+                panier = panier.filter(i => i.id !== id);
+            }
+            sauvegarderPanier();
+        }
+
+        function sauvegarderPanier() {
+            localStorage.setItem('panierClient', JSON.stringify(panier));
+            mettreAJourPanierIHM();
+        }
+
+        function mettreAJourPanierIHM() {
+            const container = document.getElementById('panier-items-container');
+            const subtotalEl = document.getElementById('panier-subtotal');
+            const totalEl = document.getElementById('panier-total-realtime');
+            const badgeCountEl = document.getElementById('badge-panier-count');
+            const itemsLabelEl = document.getElementById('panier-items-label');
+            const btnValider = document.getElementById('btn-valider-commande');
+
+            container.innerHTML = '';
+            let totalGeneral = 0;
+            let nombreTotalArticles = 0;
+
+            if (panier.length === 0) {
+                container.innerHTML = `
+                    <div class="py-8 text-center">
+                        <i class="fa-solid fa-basket-shopping text-3xl text-slate-200 mb-2"></i>
+                        <p class="text-xs text-slate-400 font-medium">Votre panier est vide</p>
+                    </div>
+                `;
+                btnValider.disabled = true;
+                btnValider.className = "w-full mt-2 bg-slate-200 text-slate-400 font-bold py-3.5 rounded-2xl text-xs transition shadow-md cursor-not-allowed";
+            } else {
+                panier.forEach(item => {
+                    const sousTotalItem = item.prix * item.quantite;
+                    totalGeneral += sousTotalItem;
+                    nombreTotalArticles += item.quantite;
+
+                    container.innerHTML += `
+                        <div class="flex items-center justify-between gap-3 bg-slate-50 p-2.5 rounded-2xl">
+                            <img src="${item.image}" alt="${item.nom}" class="w-12 h-12 rounded-xl object-cover shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-xs font-bold text-slate-800 truncate">${item.nom}</h4>
+                                <span class="text-[11px] font-semibold text-brand-orange">${item.prix.toFixed(2)} MAD</span>
+                            </div>
+                            <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-1.5 py-1">
+                                <button onclick="modifierQuantite(${item.id}, -1)" class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-red-500 font-bold text-xs">-</button>
+                                <span class="text-xs font-bold px-1 text-slate-800">${item.quantite}</span>
+                                <button onclick="modifierQuantite(${item.id}, 1)" class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-brand-orange font-bold text-xs">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                btnValider.disabled = false;
+                btnValider.className = "w-full mt-2 bg-brand-orange hover:bg-brand-darkOrange text-white font-bold py-3.5 rounded-2xl text-xs transition shadow-md shadow-brand-orange/25 active:scale-95";
+            }
+
+            subtotalEl.innerText = `${totalGeneral.toFixed(2)} MAD`;
+            totalEl.innerText = `${totalGeneral.toFixed(2)} MAD`;
+            badgeCountEl.innerText = nombreTotalArticles;
+            itemsLabelEl.innerText = `${nombreTotalArticles} article(s)`;
+        }
+
+        // Afficher/masquer les formulaires selon l'option choisie
+        function afficherFormulairePaiement() {
+            const mode = document.querySelector('input[name="modePaiement"]:checked').value;
+            const formCarte = document.getElementById('form-carte');
+            const formMobile = document.getElementById('form-mobile');
+
+            formCarte.classList.add('hidden');
+            formMobile.classList.add('hidden');
+
+            if (mode === "Carte bancaire") {
+                formCarte.classList.remove('hidden');
+            } else if (mode === "Mobile Money") {
+                formMobile.classList.remove('hidden');
+            }
+        }
+
+        // Validation avec contrôle de saisie des données de paiement
+        function validerCommande() {
+            if (panier.length === 0) return;
+
+            const modePaiementSelectionne = document.querySelector('input[name="modePaiement"]:checked').value;
+            let detailsPaiement = { mode: modePaiementSelectionne };
+
+            // Vérification des champs de la carte bancaire
+            if (modePaiementSelectionne === "Carte bancaire") {
+                const carteNum = document.getElementById('carte-numero').value.trim();
+                const carteExp = document.getElementById('carte-exp').value.trim();
+                const carteCvc = document.getElementById('carte-cvc').value.trim();
+
+                if (!carteNum || !carteExp || !carteCvc) {
+                    alert("Veuillez remplir toutes les informations de votre carte bancaire.");
+                    return;
+                }
+                detailsPaiement.info = `Carte terminant par *** ${carteNum.slice(-4)}`;
+            } 
+            // Vérification des champs Mobile Money
+            else if (modePaiementSelectionne === "Mobile Money") {
+                const operateur = document.getElementById('mobile-operateur').value;
+                const mobileNum = document.getElementById('mobile-numero').value.trim();
+
+                if (!mobileNum) {
+                    alert("Veuillez entrer votre numéro de téléphone pour le paiement mobile.");
+                    return;
+                }
+                detailsPaiement.info = `${operateur} (${mobileNum})`;
+            } else {
+                detailsPaiement.info = "Paiement en espèces à la livraison";
+            }
+
+            let totalGeneral = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
+
+            const nouvelleCommande = {
+                id: Date.now(),
+                articles: [...panier],
+                total: totalGeneral,
+                paiement: modePaiementSelectionne,
+                detailsPaiement: detailsPaiement.info,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                statut: "En attente"
+            };
+
+            let historiqueCommandes = JSON.parse(localStorage.getItem('historiqueCommandes')) || [];
+            historiqueCommandes.unshift(nouvelleCommande);
+            localStorage.setItem('historiqueCommandes', JSON.stringify(historiqueCommandes));
+
+            alert(`Commande enregistrée avec succès !\nMode de paiement : ${modePaiementSelectionne}\nDétails : ${detailsPaiement.info}`);
+
+            // Réinitialiser le panier
+            panier = [];
+            sauvegarderPanier();
+        }
+
+        function deconnecter() {
+            localStorage.removeItem('userRole');
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

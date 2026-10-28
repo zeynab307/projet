@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Panier - Saveurs d'Afrique</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Logo -->
+        <header class="header">
+            <div class="logo">
+                <span class="brand">SAVEURS AFRIQUE</span>
+            </div>
+        </header>
+
+        <!-- Titre & Toggle Sur place / À emporter -->
+        <div class="cart-title-bar">
+            <h1>Mon panier</h1>
+            <div class="toggle-switch">
+                <button class="toggle-btn" onclick="setMode('sur-place', this)">Sur place</button>
+                <button class="toggle-btn active" onclick="setMode('a-emporter', this)">À emporter</button>
+            </div>
+        </div>
+
+        <!-- Option Couverts & sac -->
+        <div class="option-card">
+            <div class="option-info">
+                <i class="fa-solid fa-utensils option-icon"></i>
+                <div>
+                    <strong>Couverts & sac</strong>
+                    <p>Aidez-nous à réduire les déchets : demandez des couverts que si vous en avez besoin.</p>
+                </div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="couverts-check">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <!-- Liste dynamique des articles du panier -->
+        <div class="cart-list" id="cart-items-container">
+            <!-- Les articles injectés par JavaScript apparaîtront ici -->
+        </div>
+
+        <!-- Section "Envie d'autre chose ?" (Catalogue de vos plats) -->
+        <div class="cross-selling">
+            <h2><i class="fa-regular fa-star"></i> Ajoutez nos spécialités !</h2>
+            <div class="recommendations-grid">
+                
+                <div class="rec-card" onclick="ajouterAuPanier('Thiep au poisson', 50.00, 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=150&q=80', 'Plat sénégalais')">
+                    <img src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=100&q=80" alt="Thiep au poisson">
+                    <h4>Thiep au poisson</h4>
+                    <span>50,00 MAD</span>
+                </div>
+
+                <div class="rec-card" onclick="ajouterAuPanier('Attieke poisson', 50.00, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=150&q=80', 'Plat ivorien')">
+                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=100&q=80" alt="Attieke poisson">
+                    <h4>Attieke poisson</h4>
+                    <span>50,00 MAD</span>
+                </div>
+
+                <div class="rec-card" onclick="ajouterAuPanier('Feuilles de manioc', 50.00, 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=150&q=80', 'Plat gabonais')">
+                    <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=100&q=80" alt="Feuilles de manioc">
+                    <h4>Feuilles de manioc</h4>
+                    <span>50,00 MAD</span>
+                </div>
+
+                <div class="rec-card" onclick="ajouterAuPanier('Sakamadesu', 50.00, 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=150&q=80', 'Plat congolais')">
+                    <img src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=100&q=80" alt="Sakamadesu">
+                    <h4>Sakamadesu</h4>
+                    <span>50,00 MAD</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'action fixe en bas -->
+    <footer class="bottom-bar">
+        <button class="btn-back" onclick="viderPanier()">VIDER LE PANIER</button>
+        <button class="btn-validate" onclick="validerCommande()">
+            VALIDER MA COMMANDE <i class="fa-solid fa-bag-shopping"></i>
+        </button>
+        <div class="total-box">
+            <span class="total-label">Total</span>
+            <span class="total-amount" id="total-price">0,00 MAD</span>
+        </div>
+    </footer>
+
+    <script>
+        // Panier initial avec vos plats par défaut
+        let panier = [
+            { id: 1, nom: "Thiep au poisson", prix: 50.00, image: "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=150&q=80", options: "Plat sénégalais", qte: 1 },
+            { id: 2, nom: "Attieke poisson", prix: 50.00, image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=150&q=80", options: "Plat ivorien", qte: 1 }
+        ];
+
+        // Charger le panier au démarrage de la page
+        document.addEventListener("DOMContentLoaded", afficherPanier);
+
+        function setMode(mode, element) {
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Afficher et mettre à jour dynamiquement le contenu du panier
+        function afficherPanier() {
+            let container = document.getElementById('cart-items-container');
+            let totalPriceElement = document.getElementById('total-price');
+            container.innerHTML = "";
+            let totalGeneral = 0;
+
+            if (panier.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Votre panier est vide.</p>`;
+                totalPriceElement.innerText = "0,00 MAD";
+                return;
+            }
+
+            panier.forEach((article, index) => {
+                let sousTotal = article.prix * article.qte;
+                totalGeneral += sousTotal;
+
+                let itemHTML = `
+                    <div class="cart-item">
+                        <img src="${article.image}" alt="${article.nom}" class="item-img">
+                        <div class="item-details">
+                            <div class="item-header">
+                                <h3>${article.nom}</h3>
+                                <span class="item-price">${article.prix.toFixed(2)} MAD</span>
+                            </div>
+                            <p class="item-options">${article.options}</p>
+                            <button class="btn-modifier">MODIFIER</button>
+                        </div>
+                        <div class="item-controls">
+                            <button class="btn-delete" onclick="supprimerArticle(${index})" title="Supprimer l'article"><i class="fa-regular fa-trash-can"></i></button>
+                            <div class="qty-picker">
+                                <button onclick="changerQte(${index}, -1)">-</button>
+                                <span class="qty">${article.qte < 10 ? '0' + article.qte : article.qte}</span>
+                                <button onclick="changerQte(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHTML;
+            });
+
+            totalPriceElement.innerText = totalGeneral.toFixed(2) + " MAD";
+        }
+
+        // Modifier la quantité (+ ou -)
+        function changerQte(index, delta) {
+            panier[index].qte += delta;
+            if (panier[index].qte <= 0) {
+                panier.splice(index, 1); // Retire l'article si la quantité tombe à 0
+            }
+            afficherPanier();
+        }
+
+        // Supprimer complètement un article via la corbeille
+        function supprimerArticle(index) {
+            panier.splice(index, 1);
+            afficherPanier();
+        }
+
+        // Ajouter un plat depuis la section "Envie d'autre chose ?"
+        function ajouterAuPanier(nom, prix, image, options) {
+            let articleExistant = panier.find(item => item.nom === nom);
+            if (articleExistant) {
+                articleExistant.qte += 1;
+            } else {
+                panier.push({ id: Date.now(), nom: nom, prix: prix, image: image, options: options, qte: 1 });
+            }
+            afficherPanier();
+        }
+
+        function viderPanier() {
+            panier = [];
+            afficherPanier();
+        }
+
+        function validerCommande() {
+            if (panier.length === 0) {
+                alert("Votre panier est vide !");
+                return;
+            }
+            alert("Votre commande a été validée avec succès !");
+            panier = [];
+            afficherPanier();
+        }
+    </script>
+</body>
+</html>

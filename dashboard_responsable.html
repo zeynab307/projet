@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saveurs d'Afrique - Dashboard Responsable</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff6b35',
+                            darkOrange: '#e05320',
+                            lightOrange: '#fff4f0',
+                            accent: '#ffa600',
+                            dark: '#1e293b',
+                            cardBg: '#ffffff',
+                            bg: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6b35;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px -5px rgba(255, 107, 53, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex min-h-screen relative overflow-x-hidden">
+
+    <!-- GARDE D'ACCÈS DU RÔLE RESPONSABLE -->
+    <script>
+        const userRole = localStorage.getItem('userRole');
+        if (userRole !== 'responsable') {
+            const autoLogin = confirm("Accès restreint au Responsable.\n\nVoulez-vous simuler l'accès Administrateur pour cette démo ?");
+            if (autoLogin) {
+                localStorage.setItem('userRole', 'responsable');
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+
+    <!-- SIDEBAR LATÉRALE GAUCHE (Reztro Inspired) -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0">
+        <div>
+            <!-- Logo & Brand Header -->
+            <div class="h-20 flex items-center px-6 border-b border-slate-100 gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-accent flex items-center justify-center text-white shadow-md shadow-brand-orange/30">
+                    <i class="fa-solid fa-utensils text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-900">Saveurs<span class="text-brand-orange">.d'Afrique</span></h1>
+                    <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">Admin Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="#" class="flex items-center gap-3.5 px-4 py-3 text-slate-500 hover:text-brand-orange hover:bg-brand-lightOrange/60 rounded-xl font-medium text-sm transition">
+                    <i class="fa-solid fa-chart-pie text-base"></i> Vue globale
+                </a>
+                <a href="#" class="flex items-center gap-3.5 px-4 py-3 bg-brand-orange text-white rounded-xl font-semibold text-sm shadow-lg shadow-brand-orange/25 transition">
+                    <i class="fa-solid fa-bowl-food text-base"></i> Menu & Plats
+                </a>
+                <a href="#" class="flex items-center gap-3.5 px-4 py-3 text-slate-500 hover:text-brand-orange hover:bg-brand-lightOrange/60 rounded-xl font-medium text-sm transition">
+                    <i class="fa-solid fa-receipt text-base"></i> Commandes
+                    <span class="ml-auto bg-brand-orange/10 text-brand-orange text-xs px-2 py-0.5 rounded-full font-bold">8</span>
+                </a>
+                <a href="#" class="flex items-center gap-3.5 px-4 py-3 text-slate-500 hover:text-brand-orange hover:bg-brand-lightOrange/60 rounded-xl font-medium text-sm transition">
+                    <i class="fa-solid fa-users text-base"></i> Clients
+                </a>
+                <a href="#" class="flex items-center gap-3.5 px-4 py-3 text-slate-500 hover:text-brand-orange hover:bg-brand-lightOrange/60 rounded-xl font-medium text-sm transition">
+                    <i class="fa-solid fa-sliders text-base"></i> Paramètres
+                </a>
+            </nav>
+        </div>
+
+        <!-- Section Bas de Sidebar (Profil rapide & Déconnexion) -->
+        <div class="p-4 border-t border-slate-100">
+            <div class="bg-slate-50 p-3 rounded-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-brand-orange text-white font-bold flex items-center justify-center text-sm shadow-sm">M</div>
+                    <div class="text-xs">
+                        <p class="font-bold text-slate-800">Responsable</p>
+                        <p class="text-slate-400 font-medium">Gérant</p>
+                    </div>
+                </div>
+                <button onclick="deconnecter()" title="Se déconnecter" class="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition">
+                    <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay Mobile Sidebar -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+
+        <!-- HEADER TOP BAR -->
+        <header class="h-20 bg-white border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:text-brand-orange rounded-lg">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+
+                <!-- Search Input -->
+                <div class="relative w-48 sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="search-input" onkeyup="filtrerPlats()" placeholder="Rechercher un plat..." class="w-full bg-slate-100/80 border-0 rounded-xl pl-10 pr-4 py-2 text-xs font-medium text-slate-700 focus:ring-2 focus:ring-brand-orange focus:bg-white outline-none transition">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="ouvrirModalAjout()" class="bg-gradient-to-r from-brand-orange to-brand-darkOrange text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md shadow-brand-orange/20 hover:opacity-95 transition active:scale-95">
+                    <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Nouveau Plat</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTAINER -->
+        <main class="flex-1 p-4 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Gestion de la Carte 🍲</h2>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Supervisez la liste des plats africains et leur disponibilité en temps réel.</p>
+                </div>
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-full text-xs font-semibold self-start md:self-auto">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Accès Administrateur Vérifié
+                </div>
+            </div>
+
+            <!-- STATS WIDGETS CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Total Plats Actifs</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-total-plats">4</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-orange-50 text-brand-orange flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Commandes du jour</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">42</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Prix Moyen / Plat</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">50.00 MAD</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Revenu Estimé</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">2,100 MAD</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION PLATS & FILTRES -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+                        <button onclick="filtrerCategorie('tous', this)" class="cat-btn text-xs font-semibold px-4 py-2 rounded-xl bg-brand-orange text-white shadow-sm transition whitespace-nowrap">Tous</button>
+                        <button onclick="filtrerCategorie('Sénégal', this)" class="cat-btn text-xs font-medium px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">🇸🇳 Sénégal</button>
+                        <button onclick="filtrerCategorie('Côte d\'Ivoire', this)" class="cat-btn text-xs font-medium px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">🇨🇮 Côte d'Ivoire</button>
+                        <button onclick="filtrerCategorie('Gabon', this)" class="cat-btn text-xs font-medium px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">🇬🇦 Gabon</button>
+                        <button onclick="filtrerCategorie('Congo', this)" class="cat-btn text-xs font-medium px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition whitespace-nowrap">🇨🇩 Congo</button>
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium shrink-0">Affichage de <strong id="count-plats-displayed" class="text-slate-700">4</strong> plat(s)</span>
+                </div>
+
+                <!-- GRILLE DES CARTES DE PLATS -->
+                <div id="plats-cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL AJOUT / ÉDITION -->
+    <div id="plat-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="fermerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4">Ajouter un nouveau plat</h3>
+            <form id="plat-form" onsubmit="enregistrerPlat(event)" class="space-y-4">
+                <input type="hidden" id="plat-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nom du Plat</label>
+                    <input type="text" id="modal-nom" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Prix (MAD)</label>
+                        <input type="number" step="0.5" id="modal-prix" required value="50.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-orange">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Pays / Origine</label>
+                        <input type="text" id="modal-origine" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-orange">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+                    <textarea id="modal-desc" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-orange"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nom du fichier image (ex: thiep.jpg)</label>
+                    <input type="text" id="modal-image" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="fermerModal()" class="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold">Annuler</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-orange text-white rounded-xl text-xs font-semibold shadow-md">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS ET DONNÉES AVEC LES IMAGES LOCALES EXACTES -->
+    <script>
+        let listePlats = [
+            {
+                id: 1,
+                nom: "Thiep au poisson",
+                origine: "Sénégal",
+                prix: 50.00,
+                desc: "Riz rouge mijoté au poisson frais, légumes du jardin et épices sénégalaises.",
+                image: "Thiep au poisson.jpg",
+                disponible: true
+            },
+            {
+                id: 2,
+                nom: "Attieke poisson",
+                origine: "Côte d'Ivoire",
+                prix: 50.00,
+                desc: "Semoule de manioc cuite à la vapeur servie avec poisson grillé, aloco et piment.",
+                image: "Attieke poisson.jpg",
+                disponible: true
+            },
+            {
+                id: 3,
+                nom: "Feuilles de manioc",
+                origine: "Gabon",
+                prix: 50.00,
+                desc: "Plat gabonais savoureux préparé à base de pâte de feuilles de manioc mijotée.",
+                image: "Feuilles de manioc.jpg",
+                disponible: true
+            },
+            {
+                id: 4,
+                nom: "Sakamadesu",
+                origine: "Congo",
+                prix: 50.00,
+                desc: "Spécialité congolaise réconfortante à base de poisson et haricots sur riz blanc.",
+                image: "sakamadesu.jpg",
+                disponible: true
+            }
+        ];
+
+        let categorieActive = 'tous';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            afficherCartesPlats();
+        });
+
+        function afficherCartesPlats() {
+            const grid = document.getElementById('plats-cards-grid');
+            const searchValue = document.getElementById('search-input').value.toLowerCase();
+            grid.innerHTML = '';
+
+            let platsFiltres = listePlats.filter(plat => {
+                const matchCat = (categorieActive === 'tous') || plat.origine.toLowerCase().includes(categorieActive.toLowerCase());
+                const matchSearch = plat.nom.toLowerCase().includes(searchValue) || plat.desc.toLowerCase().includes(searchValue);
+                return matchCat && matchSearch;
+            });
+
+            document.getElementById('count-plats-displayed').innerText = platsFiltres.length;
+            document.getElementById('stat-total-plats').innerText = listePlats.length;
+
+            if (platsFiltres.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                        <i class="fa-solid fa-utensils text-4xl text-slate-300 mb-3"></i>
+                        <p class="text-sm font-semibold text-slate-600">Aucun plat ne correspond à votre recherche</p>
+                    </div>
+                `;
+                return;
+            }
+
+            platsFiltres.forEach(plat => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm card-hover flex flex-col justify-between relative group";
+                
+                card.innerHTML = `
+                    <div class="relative h-44 overflow-hidden bg-slate-100">
+                        <img src="${plat.image}" alt="${plat.nom}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-sm border border-white/50">${plat.origine}</span>
+                        <span class="absolute top-3 right-3 ${plat.disponible ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-200'} text-[10px] font-semibold px-2.5 py-1 rounded-xl shadow-sm">${plat.disponible ? 'Disponible' : 'Épuisé'}</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="font-bold text-slate-800 text-sm group-hover:text-brand-orange transition">${plat.nom}</h4>
+                                <span class="text-brand-orange font-extrabold text-sm whitespace-nowrap">${plat.prix.toFixed(2)} MAD</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 mt-1.5 font-normal leading-relaxed">${plat.desc}</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <label class="flex items-center cursor-pointer gap-2">
+                                <input type="checkbox" ${plat.disponible ? 'checked' : ''} onchange="toggleDisponibilite(${plat.id})" class="sr-only peer">
+                                <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-orange relative"></div>
+                                <span class="text-[11px] font-medium text-slate-500">${plat.disponible ? 'Actif' : 'Masqué'}</span>
+                            </label>
+                            <div class="flex items-center gap-1">
+                                <button onclick="editerPlat(${plat.id})" title="Modifier" class="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="supprimerPlat(${plat.id})" title="Supprimer" class="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleDisponibilite(id) {
+            const plat = listePlats.find(p => p.id === id);
+            if (plat) { plat.disponible = !plat.disponible; afficherCartesPlats(); }
+        }
+
+        function supprimerPlat(id) {
+            const plat = listePlats.find(p => p.id === id);
+            if (confirm(`Voulez-vous supprimer le plat "${plat.nom}" ?`)) {
+                listePlats = listePlats.filter(p => p.id !== id);
+                afficherCartesPlats();
+            }
+        }
+
+        function filtrerCategorie(cat, btnElement) {
+            categorieActive = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn text-xs font-medium px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition whitespace-nowrap";
+            });
+            btnElement.className = "cat-btn text-xs font-semibold px-4 py-2 rounded-xl bg-brand-orange text-white shadow-sm transition whitespace-nowrap";
+            afficherCartesPlats();
+        }
+
+        function filtrerPlats() { afficherCartesPlats(); }
+
+        function ouvrirModalAjout() {
+            document.getElementById('plat-form').reset();
+            document.getElementById('plat-id').value = '';
+            document.getElementById('modal-title').innerText = 'Ajouter un nouveau plat';
+            document.getElementById('plat-modal').classList.remove('hidden');
+        }
+
+        function editerPlat(id) {
+            const plat = listePlats.find(p => p.id === id);
+            if (!plat) return;
+            document.getElementById('plat-id').value = plat.id;
+            document.getElementById('modal-nom').value = plat.nom;
+            document.getElementById('modal-prix').value = plat.prix;
+            document.getElementById('modal-origine').value = plat.origine;
+            document.getElementById('modal-desc').value = plat.desc;
+            document.getElementById('modal-image').value = plat.image;
+            document.getElementById('modal-title').innerText = 'Modifier le plat';
+            document.getElementById('plat-modal').classList.remove('hidden');
+        }
+
+        function fermerModal() { document.getElementById('plat-modal').classList.add('hidden'); }
+
+        function enregistrerPlat(e) {
+            e.preventDefault();
+            const id = document.getElementById('plat-id').value;
+            const nom = document.getElementById('modal-nom').value;
+            const prix = parseFloat(document.getElementById('modal-prix').value);
+            const origine = document.getElementById('modal-origine').value || 'Afrique';
+            const desc = document.getElementById('modal-desc').value;
+            const image = document.getElementById('modal-image').value || 'thiep.jpg';
+
+            if (id) {
+                const plat = listePlats.find(p => p.id == id);
+                if (plat) { plat.nom = nom; plat.prix = prix; plat.origine = origine; plat.desc = desc; plat.image = image; }
+            } else {
+                listePlats.unshift({ id: Date.now(), nom, prix, origine, desc, image, disponible: true });
+            }
+            fermerModal();
+            afficherCartesPlats();
+        }
+
+        function deconnecter() {
+            localStorage.removeItem('userRole');
+            alert("Vous avez été déconnecté.");
+            window.location.href = "index.html";
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
