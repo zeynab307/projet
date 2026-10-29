@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscription – Table du Monde</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap");
+:root{--bg:#f6f1e6;--card:#fffdf7;--tx:#1b2a22;--mut:#66706a;--ac:#12503a;--act:#fff;--gold:#f0a500;--on-gold:#2b1d00;--bd:#e5dcc8;--er:#b42318;--r:16px;--sh:0 1px 2px rgba(20,40,30,.06),0 10px 28px rgba(20,40,30,.08);--f:"Bricolage Grotesque",Georgia,serif;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1612;--card:#16211b;--tx:#ece7da;--mut:#a2ada5;--ac:#6fd3a2;--act:#08200f;--bd:#27362d;--er:#ff8a7a;--sh:0 10px 28px rgba(0,0,0,.35)}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f);line-height:1.1;margin:0 0 .5em;letter-spacing:-.01em}
+h1{font-size:clamp(1.9rem,5vw,2.6rem);font-weight:800}h2{font-size:1.5rem;font-weight:700}h3{font-size:1.1rem;font-weight:700}
+a{color:var(--ac)}
+main{max-width:1080px;margin:0 auto;padding:1.4rem 1rem 3rem}
+main>section+section{margin-top:2.6rem}
+.pied{text-align:center;color:var(--mut);font-size:.88rem;padding:1.5rem 1rem 2rem;border-top:1px solid var(--bd)}
+.mut{color:var(--mut)}.petit{font-size:.85rem}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+/* en-tête */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+.top-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem 1rem;padding:.65rem 1rem}
+.logo{display:flex;align-items:center;gap:.55rem;font:800 1.15rem var(--f);text-decoration:none;color:var(--tx);margin-right:auto}
+.logo-m{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:11px;background:#12503a;font-size:1.1rem}
+.top nav{display:flex;flex-wrap:wrap;gap:.2rem}
+.top nav a{padding:.4rem .85rem;border-radius:99px;text-decoration:none;color:var(--tx);font-weight:600;font-size:.95rem}
+.top nav a:hover{background:var(--bd)}
+.top nav a[aria-current]{background:var(--ac);color:var(--act)}
+.pastille{display:inline-grid;place-items:center;min-width:1.3rem;height:1.3rem;margin-left:.4rem;border-radius:99px;background:var(--gold);color:var(--on-gold);font-size:.75rem;font-weight:800}
+/* boutons */
+.btn{display:inline-block;border:1.5px solid var(--ac);background:var(--ac);color:var(--act);border-radius:12px;padding:.6rem 1.2rem;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.6);color:#fff}
+.btn.alt{background:transparent;color:var(--ac)}
+.btn.danger{background:transparent;color:var(--er);border-color:var(--er)}
+.btn.sm{padding:.3rem .75rem;font-size:.9rem;border-radius:10px}
+.btn.large{display:block;width:100%;padding:.85rem 1rem;font-size:1.05rem}
+.btn-icone{border:0;background:transparent;font-size:1.2rem;cursor:pointer;padding:.3rem;border-radius:8px}
+.btn-icone:hover{background:var(--bd)}
+@media(prefers-reduced-motion:no-preference){.btn{transition:transform .12s,filter .12s}.btn:hover{filter:brightness(1.07)}.btn:active{transform:scale(.97)}}
+/* formulaires */
+.box{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:1.2rem;display:grid;gap:.9rem;box-shadow:var(--sh)}
+.box h1,.box h2{margin:0}
+label{display:grid;gap:.3rem;font-weight:600;font-size:.92rem}
+input,select,textarea{font:inherit;color:inherit;background:var(--bg);border:1.5px solid var(--bd);border-radius:12px;padding:.65rem .8rem;width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 25%,transparent)}
+.aide{font-weight:400;color:var(--mut);font-size:.82rem}
+.erreur{color:var(--er);margin:0;min-height:1.2em;font-size:.9rem}
+.vide{padding:2rem 1rem;text-align:center;color:var(--mut);border:2px dashed var(--bd);border-radius:var(--r)}
+#zone-localisation:empty,#zone-paiement:empty{display:none}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;border:0;padding:0;margin:0}
+.roles legend{font-weight:600;font-size:.92rem;padding:0;margin-bottom:.4rem}
+.roles label{position:relative;display:flex;align-items:center;gap:.6rem;border:1.5px solid var(--bd);border-radius:12px;padding:.6rem .7rem;cursor:pointer}
+.roles input{position:absolute;opacity:0;pointer-events:none}
+.roles .ri{font-size:1.6rem}
+.roles small{display:block;font-weight:400;color:var(--mut)}
+.roles label:has(input:checked){border-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent);box-shadow:inset 0 0 0 1px var(--ac)}
+.roles label:has(:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+.champ-code{display:none}
+form:has(input[value="responsable"]:checked) .champ-code{display:grid}
+/* auth */
+.auth{display:grid;grid-template-columns:1fr 1fr;max-width:920px;margin:1rem auto;border-radius:24px;overflow:hidden;border:1px solid var(--bd);box-shadow:var(--sh);background:var(--card)}
+.auth-vis{padding:2rem;display:flex;flex-direction:column;justify-content:center;gap:.8rem;color:#f4efe2;background:radial-gradient(circle at 90% 8%,rgba(240,165,0,.35),transparent 45%),repeating-conic-gradient(rgba(255,255,255,.05) 0 25%,transparent 0 50%) 0 0/34px 34px,linear-gradient(160deg,#0c3326,#12503a)}
+.auth-vis h2{color:#fff;font-size:1.9rem;margin:0}.auth-vis p{margin:0;opacity:.9}
+.auth-vis ul{list-style:none;padding:0;margin:.4rem 0 0;display:grid;gap:.5rem}
+.auth-vis li::before{content:"✓ ";color:var(--gold);font-weight:800}
+.auth .box{border:0;border-radius:0;box-shadow:none;padding:2rem}
+@media(max-width:760px){.auth{grid-template-columns:1fr}.auth-vis{padding:1.4rem}.auth-vis ul{display:none}.auth .box{padding:1.3rem}}
+/* accueil */
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:1.5rem;align-items:center;padding:clamp(1.4rem,4vw,3rem);border-radius:24px;color:#f4efe2;overflow:hidden;background:radial-gradient(circle at 88% 12%,rgba(240,165,0,.38),transparent 42%),repeating-conic-gradient(rgba(255,255,255,.05) 0 25%,transparent 0 50%) 0 0/34px 34px,linear-gradient(135deg,#0c3326,#12503a 60%,#1c6b4e)}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);color:#fff}
+.hero em{font-style:normal;color:var(--gold)}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:var(--gold);margin:0 0 .8rem}
+.lead{max-width:46ch;opacity:.92;font-size:1.08rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.2rem 0}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:0}
+.chips li{background:rgba(255,255,255,.13);border-radius:99px;padding:.25rem .8rem;font-size:.88rem}
+.hero-vis{position:relative;min-height:240px;display:grid;place-items:center}
+.assiette{width:min(240px,60vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:6rem;background:radial-gradient(circle,#fff3cf 0 38%,#f0a500 39% 41%,#fff3cf 42% 62%,#e8dcc0 63%);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.flot{position:absolute;background:var(--card);color:var(--tx);border-radius:99px;padding:.3rem .8rem;font-weight:700;font-size:.9rem;box-shadow:var(--sh)}
+.f1{top:4%;left:2%}.f2{bottom:6%;left:0}.f3{top:32%;right:0}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero-vis{min-height:210px}}
+.grille-pays,.grille{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.pays{position:relative;display:flex;flex-direction:column;gap:.3rem;text-decoration:none;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:1.4rem 1.1rem 1rem;overflow:hidden;box-shadow:var(--sh)}
+.pays::before{content:"";position:absolute;inset:0 0 auto;height:6px;background:linear-gradient(90deg,var(--a) 0 33%,var(--b) 33% 66%,var(--c) 66%)}
+.pays .drapeau{font-size:2.6rem;line-height:1}.pays strong{font:700 1.15rem var(--f)}
+.pays .go{margin-top:.4rem;color:var(--ac);font-weight:700}
+.pays:hover{border-color:var(--ac)}
+.plat{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.plat .vis{display:grid;place-items:center;height:110px;font-size:3.4rem;background:linear-gradient(135deg,#fbe7b0,#f6c85f)}
+.plat .info{padding:.9rem 1rem 0;flex:1}.plat .info p{margin:0;font-size:.92rem}
+.plat .bas{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem 1rem}
+.tag{display:inline-block;background:var(--bd);border-radius:99px;padding:0 .65rem;font-size:.78rem;font-weight:700;margin-bottom:.4rem}
+.prix{font:800 1.15rem var(--f);color:var(--ac)}
+@media(prefers-reduced-motion:no-preference){.pays,.plat{transition:transform .15s,box-shadow .15s}.pays:hover,.plat:hover{transform:translateY(-3px)}}
+.etapes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.etape{background:var(--card);border:2px dashed var(--bd);border-radius:var(--r);padding:1.1rem;text-align:center}
+.etape span{font-size:2rem;display:block}.etape p{margin:0}
+/* parcours commande */
+.etapes-cmd{display:flex;gap:.5rem;flex-wrap:wrap;list-style:none;padding:0;margin:0 0 1.2rem;counter-reset:e}
+.etapes-cmd li{counter-increment:e;display:flex;align-items:center;gap:.5rem;padding:.3rem .9rem .3rem .35rem;border-radius:99px;background:var(--card);border:1px solid var(--bd);color:var(--mut);font-weight:600;font-size:.9rem}
+.etapes-cmd li::before{content:counter(e);display:grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--bd);color:var(--tx);font-size:.8rem}
+.etapes-cmd .actif{color:var(--tx);border-color:var(--ac)}.etapes-cmd .actif::before{background:var(--ac);color:var(--act)}
+.etapes-cmd .fait::before{content:"✓";background:var(--ac);color:var(--act)}.etapes-cmd .fait{color:var(--tx)}
+.duo{display:grid;grid-template-columns:1fr 340px;gap:1.2rem;align-items:start}
+.resume{position:sticky;top:5rem}
+@media(max-width:820px){.duo{grid-template-columns:1fr}.resume{position:static}}
+.articles{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.articles li{display:flex;justify-content:space-between;gap:.8rem}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin:0;padding-top:.8rem;border-top:2px dashed var(--bd);font:800 1.4rem var(--f)}
+dl{display:grid;grid-template-columns:auto 1fr;gap:.25rem .9rem;margin:0}dt{color:var(--mut)}dd{margin:0;text-align:right}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem}
+/* statuts */
+.statut{display:inline-block;border-radius:99px;padding:.1rem .75rem;font-size:.82rem;font-weight:700;background:#fde7a8;color:#3a2600;white-space:nowrap}
+.statut.livraison{background:var(--ac);color:var(--act)}
+.statut.livree{background:var(--bd);color:var(--tx)}
+/* boîte de dialogue (T1.4) */
+dialog{border:0;padding:0;background:transparent;color:var(--tx);width:min(92vw,460px)}
+dialog::backdrop{background:rgba(8,18,13,.6);backdrop-filter:blur(2px)}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in"><a class="logo" href="accueil.html"><span class="logo-m" aria-hidden="true">🍲</span>Table du Monde</a><nav aria-label="Navigation principale"><a href="accueil.html">Accueil</a><a href="menu.html">Menu</a><a href="panier.html">Panier<span class="pastille" id="nb-panier">3</span></a><a href="historique.html">Mes commandes</a></nav><a class="btn sm" href="connexion.html">Connexion</a></div></header>
+<main>
+<div class="auth"><aside class="auth-vis" aria-hidden="true"><span style="font-size:2.6rem">🍲</span><h2>Rejoignez Table du Monde</h2><p>Créez votre compte en 30 secondes et commandez vos plats préférés.</p><ul><li>8 plats d’Afrique centrale et de l’Ouest</li><li>Paiement en espèces ou par TPE</li><li>Suivi de commande en temps réel</li></ul></aside>
+<!-- Hooks JS (T8.3) : #form-inscription, name=role|nom|email|mot-de-passe|confirmation|code-responsable, #erreur -->
+<form id="form-inscription" class="box" novalidate>
+<h1>Créer un compte</h1>
+<fieldset class="roles"><legend>Je m’inscris en tant que</legend>
+<label><input type="radio" name="role" value="client" checked><span class="ri">🍽️</span><span><strong>Client</strong><small>Je commande</small></span></label>
+<label><input type="radio" name="role" value="responsable"><span class="ri">🧑‍🍳</span><span><strong>Responsable</strong><small>Je gère le restaurant</small></span></label></fieldset>
+<label>Nom complet<input type="text" name="nom" required minlength="2" autocomplete="name"></label>
+<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="vous@exemple.com"></label>
+<label>Mot de passe<input type="password" name="mot-de-passe" required minlength="6" autocomplete="new-password"><span class="aide">6 caractères minimum</span></label>
+<label>Confirmer le mot de passe<input type="password" name="confirmation" required autocomplete="new-password"></label>
+<label class="champ-code">Code d’accès Responsable<input type="text" name="code-responsable" autocomplete="off"></label>
+<p class="erreur" id="erreur" role="alert"></p>
+<button class="btn gold large" type="submit">Créer mon compte</button>
+<p class="mut">Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
+</form></div>
+</main>
+<footer class="pied">© 2026 Table du Monde · Gabon · RD Congo · Sénégal · Côte d’Ivoire</footer>
+</body>
+</html>
